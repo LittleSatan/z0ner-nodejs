@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/LittleSatan/z0ner-nodejs/issues"
   },
-  "homepage": "https://github.com/LittleSatan/z0ner-nodejs#readme"
+  "homepage": "https://github.com/LittleSatan/z0ner-nodejs#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
 }
