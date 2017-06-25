@@ -1,0 +1,19 @@
+{
+  "name": "z0ner-nodejs",
+  "version": "1.0.0",
+  "description": "just a stupid video site with short loops. or gifs. or images. or whatever you want.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LittleSatan/z0ner-nodejs.git"
+  },
+  "author": "marissaChan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LittleSatan/z0ner-nodejs/issues"
+  },
+  "homepage": "https://github.com/LittleSatan/z0ner-nodejs#readme"
+}
