@@ -10,8 +10,9 @@
         <source src="static/media/<%= userid %>/video.mp4" type="video/mp4">
         <source src="static/media/<%= userid %>/video.webm" type="video/webm">
     </video>
-
+    
     <div id="overlay">
+        <progress id='progressBar' min='0' max='100' value='0'></progress>
         <%- include header.ejs %>
         <%- include footer.ejs %>
     </div>

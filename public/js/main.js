@@ -12,17 +12,6 @@ function pauseUnpause(){
 
 }
 
-// hide or unhide overlay
-function hideUnHideOverlay(){
-    disableHideUnHideOverlay = true;
-    if (overlayHidden){
-        fadeIn(document.getElementById("overlay"));
-    } else {
-        fadeOut(document.getElementById("overlay"));
-    }
-    overlayHidden = !overlayHidden;
-}
-
 // go to prev video
 function goPrev(){
     id--;
@@ -73,6 +62,51 @@ function goRandom(){
         });
 }
 
+// change fullscreen
+function changeFullscreen(){
+    let body = document.body;
+    
+    if (!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement)) {
+        // go fullscreen
+        if (body.requestFullscreen) {
+        	body.requestFullscreen();
+        } else if (body.webkitRequestFullscreen) {
+        	body.webkitRequestFullscreen();
+        } else if (body.mozRequestFullScreen) {
+        	body.mozRequestFullScreen();
+        } else if (body.msRequestFullscreen) {
+        	body.msRequestFullscreen();
+        }
+    } else {
+        // leave fullscreen
+        if (document.exitFullscreen) {
+        	document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+        	document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+        	document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+        	document.msExitFullscreen();
+        }
+    }
+}
+
+// hide menu
+function hideMenu(){
+    if (overlayHidden) return;
+    overlayHidden = true;
+    document.body.style.cursor = "none";
+    fadeOut(document.getElementById("overlay"));
+}
+
+// showMenu
+function showMenu(){
+    if (!overlayHidden) return;
+    document.body.style.cursor = "auto";
+    overlayHidden = false;
+    fadeIn(document.getElementById("overlay"));
+}
+
 // load new video
 function loadNewVideo(fromHistory){
     if (!fromHistory) history.pushState(id, `${id} - z0ner`, id);
@@ -83,20 +117,38 @@ function loadNewVideo(fromHistory){
     player.load();
 }
 
+// progressBar vor video
+setInterval(function(){ 
+    updateProgressBar();    
+}, 20);
+
+function updateProgressBar() {
+    let progressBar = document.getElementById('progressBar');
+    let percentage = (100 / player.duration) * player.currentTime;
+    percentage = Math.min(Math.max(percentage, 0), 100);
+    if (isNaN(percentage)){
+        progressBar.value = 0;
+    } else {
+        progressBar.value = percentage;
+    }
+}
+
+// history thingy
 window.addEventListener('popstate', function(e) {
     id = e.state;
     loadNewVideo(true);
 });
 
 // fadeOut an element
-// stolen from github: 
+// stolen and modified from github: 
 // https://stackoverflow.com/questions/13733912/javascript-fade-in-fade-out-without-jquery-and-css3
 // by https://stackoverflow.com/users/1000849/ravi
 function fadeOut(element) {
-    var op = element.style.opacity || 1;  // initial opacity
-    var timer = setInterval(function () {
+    let op = Number(element.style.opacity) || 1;  // initial opacity
+    clearInterval(element.fade);
+    element.fade = setInterval(function () {
         if (op <= 0.05){
-            clearInterval(timer);
+            clearInterval(element.fade);
             element.style.opacity = 0;
             element.style.filter = 'alpha(opacity=' + 0 + ")";
             element.style.display = 'none';
@@ -110,20 +162,19 @@ function fadeOut(element) {
 // fadeIn an element
 function fadeIn(element) {
     element.style.display = 'initial';
-    var op = element.style.opacity || 0.05;  // initial opacity
-    console.log(op);
-    var timer = setInterval(function () {
+    let op = Number(element.style.opacity) || 0.05;  // initial opacity
+    clearInterval(element.fade);
+    element.fade = setInterval(function () {
         if (op >= 1){
             element.style.opacity = 1;
             element.style.filter = 'alpha(opacity=' + 100 + ")";
-            clearInterval(timer);
+            clearInterval(element.fade);
         }
         element.style.opacity = op;
         element.style.filter = 'alpha(opacity=' + op * 100 + ")";
         op += op * 0.3;
     }, 50);
 }
-
 
 // stolen from github:
 // https://stackoverflow.com/a/35970894/4220748
@@ -143,5 +194,10 @@ function getJSON(url, callback) {
     xhr.send();
 }
 
+// replace current history state so we get the first id
+history.replaceState(id, `${id} - z0ner`, id);
 fadeOut(document.getElementById("loading"));
+
+// start timeOut so we can hide the cursor
+timeout = setTimeout(function(){hideMenu()}, 2000);
 document.getElementById("player").play();
