@@ -3,6 +3,8 @@ console.log(`Starting server...`);
 const express = require(`express`);
 const app = express();
 const ejs = require('ejs');
+const formidable = require('formidable');
+const cookieParser = require('cookie-parser');
 
 // express - static files
 app.use(`/static`, express.static(__dirname + `/public/`));
@@ -12,15 +14,17 @@ app.get(`/favicon.ico`, function(req, res){
     res.send(__dirname + `/public/favicon.ico`);
 });
 
-app.get(`/getRandomID`, function(req, res){
+// express API - get random ID
+app.get(`/API/getRandomID/`, function(req, res){
     let id = getRandomID();
     console.log(id);
-    res.send(`{id: ${id}}`);
+    res.json(`{"randomId": ${id}}`);
 });
 
-app.get(`/getMaxID`, function(req, res){
+// express API - get maxID
+app.get(`/API/getMaxID`, function(req, res){
     let id = getMaxID();
-    res.send(`{id: ${id}}`);
+    res.json(`{"maxID": ${id}}`);
 });
 
 // express - send user to id
@@ -29,7 +33,7 @@ app.get(`/:id`, function(req, res){
     let id = req.params.id;
     
     // check if id is valid
-    if (isNaN(id) || !(id == parseInt(id, 10)) || id < 0){
+    if (isNaN(id) || !(id == parseInt(id, 10)) || id < 0 || id > getMaxID()){
             res.redirect(`/${getRandomID()}`);
         return;
     }
@@ -50,12 +54,12 @@ function openID(req, res, id){
     res.render(__dirname + `/views/index.ejs`, {userid: id});
 }
 
-// API - get random ID
+// get random ID
 function getRandomID(){
     return Math.round(Math.random() * getMaxID());
 }
 
-// API - get Max ID
+// get Max ID
 function getMaxID(){
-    return 1;
+    return 2;
 }
