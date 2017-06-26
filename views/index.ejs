@@ -1,19 +1,22 @@
 <!doctype html>
 
-<html lang="en">
+<html lang="de">
 <head>
     <%- include head.ejs %>
 </head>
 <body>
     
-    <div id="player">
-        
-        <%= userid %>
+    <video id="player" loop>
+        <source src="static/media/<%= userid %>/video.mp4" type="video/mp4">
+        <source src="static/media/<%= userid %>/video.webm" type="video/webm">
+    </video>
 
+    <div id="overlay">
+        <%- include header.ejs %>
+        <%- include footer.ejs %>
     </div>
-    
-    <%- include header.ejs %>
-    <%- include footer.ejs %>
+
+    <div id="loading"><span id="loadingText" class="disableSelect">Loading...</span></div>
     
 </body>
 </html>
