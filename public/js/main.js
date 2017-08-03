@@ -1,98 +1,99 @@
 let player = document.getElementById("player");
 let tempData;
 let overlayHidden = false;
+let apiLoc = '/API/';
 
 // pause or unpause
-function pauseUnpause(){
+function pauseUnpause() {
     if (player.paused) {
-        player.play(); 
-    } else { 
-        player.pause(); 
+        player.play();
+    } else {
+        player.pause();
     }
 
 }
 
 // go to prev video
-function goPrev(){
+function goPrev() {
     id--;
     if (id < 0) {
         // get max id
-        getJSON('https://z0ner-nodejs-marissachan.c9users.io/API/getMaxID', function(err, data) {
+        getJSON(apiLoc + 'getMaxID', function(err, data) {
             if (err != null) {
                 console.log('Something went wrong: ' + err);
             } else {
                 id = JSON.parse(data).maxID;
                 loadNewVideo();
             }
-            });
+        });
     } else {
         loadNewVideo();
     }
 }
 
 // go to next video
-function goNext(){
+function goNext() {
     id++;
-    getJSON('https://z0ner-nodejs-marissachan.c9users.io/API/getMaxID', function(err, data) {
+    getJSON(apiLoc + 'getMaxID', function(err, data) {
         if (err != null) {
             console.log('Something went wrong: ' + err);
         } else {
             if (id > JSON.parse(data).maxID) id = 0;
             loadNewVideo();
         }
-        });
+    });
 }
 
 // go to random video
-function goRandom(){
+function goRandom() {
     let sources = player.getElementsByTagName('source');
-    getJSON('https://z0ner-nodejs-marissachan.c9users.io/API/getMaxID', function(err, data) {
+    getJSON(apiLoc + 'getMaxID', function(err, data) {
         if (err != null) {
             console.log('Something went wrong: ' + err);
         } else {
             let maxID = JSON.parse(data).maxID;
             let newID = Math.round(Math.random() * maxID);
-            
-            while (newID == id){
+
+            while (newID == id) {
                 newID = Math.round(Math.random() * maxID);
             }
-            id = newID;            
+            id = newID;
             loadNewVideo();
         }
-        });
+    });
 }
 
 // change fullscreen
-function changeFullscreen(){
+function changeFullscreen() {
     let body = document.body;
-    
+
     if (!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement)) {
         // go fullscreen
         if (body.requestFullscreen) {
-        	body.requestFullscreen();
+            body.requestFullscreen();
         } else if (body.webkitRequestFullscreen) {
-        	body.webkitRequestFullscreen();
+            body.webkitRequestFullscreen();
         } else if (body.mozRequestFullScreen) {
-        	body.mozRequestFullScreen();
+            body.mozRequestFullScreen();
         } else if (body.msRequestFullscreen) {
-        	body.msRequestFullscreen();
+            body.msRequestFullscreen();
         }
     } else {
         // leave fullscreen
         if (document.exitFullscreen) {
-        	document.exitFullscreen();
+            document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
-        	document.webkitExitFullscreen();
+            document.webkitExitFullscreen();
         } else if (document.mozCancelFullScreen) {
-        	document.mozCancelFullScreen();
+            document.mozCancelFullScreen();
         } else if (document.msExitFullscreen) {
-        	document.msExitFullscreen();
+            document.msExitFullscreen();
         }
     }
 }
 
 // hide menu
-function hideMenu(){
+function hideMenu() {
     if (overlayHidden) return;
     overlayHidden = true;
     document.body.style.cursor = "none";
@@ -100,7 +101,7 @@ function hideMenu(){
 }
 
 // showMenu
-function showMenu(){
+function showMenu() {
     if (!overlayHidden) return;
     document.body.style.cursor = "auto";
     overlayHidden = false;
@@ -108,7 +109,7 @@ function showMenu(){
 }
 
 // load new video
-function loadNewVideo(fromHistory){
+function loadNewVideo(fromHistory) {
     if (!fromHistory) history.pushState(id, `${id} - z0ner`, id);
     document.title = `${id} - z0ner`;
     let sources = player.getElementsByTagName('source');
@@ -118,15 +119,14 @@ function loadNewVideo(fromHistory){
 }
 
 // progressBar vor video
-setInterval(function(){ 
-    updateProgressBar();    
+setInterval(function() {
+    updateProgressBar();
 }, 20);
 
 function updateProgressBar() {
-    let progressBar = document.getElementById('progressBar');
     let percentage = (100 / player.duration) * player.currentTime;
     percentage = Math.min(Math.max(percentage, 0), 100);
-    if (isNaN(percentage)){
+    if (isNaN(percentage)) {
         progressBar.value = 0;
     } else {
         progressBar.value = percentage;
@@ -144,10 +144,10 @@ window.addEventListener('popstate', function(e) {
 // https://stackoverflow.com/questions/13733912/javascript-fade-in-fade-out-without-jquery-and-css3
 // by https://stackoverflow.com/users/1000849/ravi
 function fadeOut(element) {
-    let op = Number(element.style.opacity) || 1;  // initial opacity
+    let op = Number(element.style.opacity) || 1; // initial opacity
     clearInterval(element.fade);
-    element.fade = setInterval(function () {
-        if (op <= 0.05){
+    element.fade = setInterval(function() {
+        if (op <= 0.05) {
             clearInterval(element.fade);
             element.style.opacity = 0;
             element.style.filter = 'alpha(opacity=' + 0 + ")";
@@ -162,10 +162,10 @@ function fadeOut(element) {
 // fadeIn an element
 function fadeIn(element) {
     element.style.display = 'initial';
-    let op = Number(element.style.opacity) || 0.05;  // initial opacity
+    let op = Number(element.style.opacity) || 0.05; // initial opacity
     clearInterval(element.fade);
-    element.fade = setInterval(function () {
-        if (op >= 1){
+    element.fade = setInterval(function() {
+        if (op >= 1) {
             element.style.opacity = 1;
             element.style.filter = 'alpha(opacity=' + 100 + ")";
             clearInterval(element.fade);
@@ -176,6 +176,7 @@ function fadeIn(element) {
     }, 50);
 }
 
+// getJson
 // stolen from github:
 // https://stackoverflow.com/a/35970894/4220748
 // by https://stackoverflow.com/users/3859863/robin-hartmann
@@ -184,12 +185,12 @@ function getJSON(url, callback) {
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
     xhr.onload = function() {
-      var status = xhr.status;
-      if (status == 200) {
-        callback(null, xhr.response);
-      } else {
-        callback(status);
-      }
+        var status = xhr.status;
+        if (status == 200) {
+            callback(null, xhr.response);
+        } else {
+            callback(status);
+        }
     };
     xhr.send();
 }
@@ -199,5 +200,5 @@ history.replaceState(id, `${id} - z0ner`, id);
 fadeOut(document.getElementById("loading"));
 
 // start timeOut so we can hide the cursor
-timeout = setTimeout(function(){hideMenu()}, 2000);
+timeout = setTimeout(function() { hideMenu() }, 2000);
 document.getElementById("player").play();

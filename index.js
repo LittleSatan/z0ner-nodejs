@@ -46,7 +46,7 @@ app.get(`*`, function(req, res) {
     res.redirect(`/${getRandomID()}`);
 });
 
-let server = app.listen(process.env.PORT, process.env.IP);
+let server = app.listen(process.env.PORT || 3000, process.env.IP);
 
 // Send prerendered website
 function openID(req, res, id){
