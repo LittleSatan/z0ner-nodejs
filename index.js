@@ -46,8 +46,6 @@ app.get(`*`, function(req, res) {
     res.redirect(`/${getRandomID()}`);
 });
 
-let server = app.listen(process.env.PORT || 3000, process.env.IP);
-
 // get random ID
 function getRandomID(){
     return Math.round(Math.random() * getMaxID());
@@ -57,3 +55,5 @@ function getRandomID(){
 function getMaxID(){
     return 2;
 }
+
+let server = app.listen(process.env.PORT || 3000, process.env.IP);
