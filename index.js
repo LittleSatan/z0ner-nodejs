@@ -16,15 +16,12 @@ app.get(`/favicon.ico`, function(req, res){
 
 // express API - get random ID
 app.get(`/API/getRandomID/`, function(req, res){
-    let id = getRandomID();
-    console.log(id);
-    res.json(`{"randomId": ${id}}`);
+    res.json(`{"randomId": ${getRandomID()}}`);
 });
 
 // express API - get maxID
 app.get(`/API/getMaxID`, function(req, res){
-    let id = getMaxID();
-    res.json(`{"maxID": ${id}}`);
+    res.json(`{"maxID": ${getMaxID()}}`);
 });
 
 // express - send user to id
@@ -37,9 +34,12 @@ app.get(`/:id`, function(req, res){
             res.redirect(`/${getRandomID()}`);
         return;
     }
-    openID(req, res, req.params.id)}
 
-);
+    // render website for first user
+    app.engine('ejs', ejs.renderFile);
+    res.render(__dirname + `/views/index.ejs`, {userid: id});
+
+});
 
 // express - user tried to open index or something invalid. open random id
 app.get(`*`, function(req, res) {
@@ -47,12 +47,6 @@ app.get(`*`, function(req, res) {
 });
 
 let server = app.listen(process.env.PORT || 3000, process.env.IP);
-
-// Send prerendered website
-function openID(req, res, id){
-    app.engine('ejs', ejs.renderFile);
-    res.render(__dirname + `/views/index.ejs`, {userid: id});
-}
 
 // get random ID
 function getRandomID(){
